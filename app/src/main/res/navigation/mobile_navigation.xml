@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/newsLine">
+
+    <fragment
+        android:id="@+id/newsLine"
+        android:name="com.bulochka.maximum_education.ui.newsline.NewsLineFragment"
+        android:label="Newsline"
+        tools:layout="@layout/fragment_newsline">
+        <action
+            android:id="@+id/action_newsLine_to_newsCard"
+            app:destination="@+id/newsCard" />
+        <action
+            android:id="@+id/action_newsLine_to_image"
+            app:destination="@+id/image" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsCard"
+        android:name="com.bulochka.maximum_education.ui.card_news.NewsCardFragment"
+        android:label="News card"
+        tools:layout="@layout/fragment_news_card">
+        <argument
+            android:name="selected_news"
+            app:argType="com.bulochka.maximum_education.data.model.News" />
+        <action
+            android:id="@+id/action_newsCard_to_image"
+            app:destination="@+id/image" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/image"
+        android:name="com.bulochka.maximum_education.ui.image.ImageFragment"
+        android:label="News card"
+        tools:layout="@layout/fragment_image">
+        <argument
+            android:name="selected_image"
+            app:argType="string" />
+    </fragment>
+
+</navigation>
