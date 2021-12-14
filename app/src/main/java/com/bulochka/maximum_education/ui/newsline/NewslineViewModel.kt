@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewslineViewModel @Inject constructor(
-    private val repository: Repository,
+    private val repository: Repository
 ): ViewModel() {
 
     private val _news = MutableLiveData<List<News>>()

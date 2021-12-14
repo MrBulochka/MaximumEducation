@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bulochka.maximum_education.data.model.News
@@ -19,11 +20,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewsLineFragment: Fragment() {
 
-    private val newslineViewModel: NewslineViewModel by viewModels()
+    private val newslineViewModel by viewModels<NewslineViewModel>()
 
     private lateinit var _binding: FragmentNewslineBinding
 
     @Inject lateinit var newsAdapter: NewsAdapter
+    private val linearManager = LinearLayoutManager(context)
     private var pageNumber = 1
     private var newsList = ArrayList<News>()
 
@@ -47,26 +49,15 @@ class NewsLineFragment: Fragment() {
     }
 
     private fun initRecycler() {
-        val linearLayout = LinearLayoutManager(context)
         _binding.newsRecycler.apply {
             adapter = newsAdapter
-            layoutManager = linearLayout
+            layoutManager = linearManager
             addItemDecoration(SpacingItemDecoration())
             addOnScrollListener(
-                ScrollListener({ loadNews() }, linearLayout)
+                ScrollListener({
+                    loadNews()
+                }, linearManager)
             )
-        }
-
-        newsAdapter.setOnTitleClickListener { news ->
-            val bundle = Bundle()
-            bundle.putSerializable("selected_news", news)
-            findNavController().navigate(R.id.action_newsLine_to_newsCard, bundle)
-        }
-
-        newsAdapter.setOnImageClickListener { imageUrl ->
-            val bundle = Bundle()
-            bundle.putString("selected_image", imageUrl)
-            findNavController().navigate(R.id.action_newsLine_to_image, bundle)
         }
     }
 
@@ -83,7 +74,6 @@ class NewsLineFragment: Fragment() {
             newsAdapter.submitList(newsList)
             _binding.swipeContainer.isRefreshing = false
             Log.d("NewsLineFragment", "news size - ${newsList.size}, $pageNumber")
-            pageNumber += 1
         }
     }
 
@@ -92,9 +82,20 @@ class NewsLineFragment: Fragment() {
             pageNumber = 1
             loadNews()
         }
+        newsAdapter.setOnTitleClickListener { news ->
+            val bundle = Bundle()
+            bundle.putSerializable("selected_news", news)
+            findNavController().navigate(R.id.action_newsLine_to_newsCard, bundle)
+        }
+        newsAdapter.setOnImageClickListener { imageUrl ->
+            val bundle = Bundle()
+            bundle.putString("selected_image", imageUrl)
+            findNavController().navigate(R.id.action_newsLine_to_image, bundle)
+        }
     }
 
     private fun loadNews() {
         newslineViewModel.loadNewsWithException(pageNumber.toString())
+        pageNumber += 1
     }
 }
